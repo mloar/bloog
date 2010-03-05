@@ -39,6 +39,11 @@ from google.appengine.api import datastore_types
 
 from utils.external import simplejson
 
+class MagicDict(dict):
+    def set_unindexed_properties(self, unindexed_properties):
+        # TODO: The Google code calls this.  What is it for?
+        pass
+
 def to_dict(model_obj, attr_list, init_dict_func=None):
     """Converts Model properties into various formats.
 
@@ -54,7 +59,7 @@ def to_dict(model_obj, attr_list, init_dict_func=None):
     key set to the last name in the chain, e.g. 'count' 
     in the above example.
     """
-    values = {}
+    values = MagicDict()
     init_dict_func(values)
     for token in attr_list:
         elems = token.split('.')
