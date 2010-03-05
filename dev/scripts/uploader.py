@@ -549,12 +549,13 @@ class AtomConverter(BlogConverter):
             article['format'] = 'html'
             published = entry['published_parsed']
             last_modified = entry['published'] #entry['updated']
-            article['published'] = '%s-%s-%s %s:%s:%s' % (published[0], published[1], published[2], published[3], published[4], published[5])
+            article['published'] = '%d-%02d-%02d %02d:%02d:%02d' % (published[0], published[1], published[2], published[3], published[4], published[5])
             article['updated'] = article['published'] #str(last_modified)
-            article['post_url'] = '/%s/%s' % (published[0], published[1])
+            article['post_url'] = '/%d/%02d' % (published[0], published[1])
             tags = {}
-            for cat in entry['tags']:
-                tags[cat['term']] = cat['term']
+            if (hasattr(entry, 'tags')):
+                for cat in entry['tags']:
+                    tags[cat['term']] = cat['term']
             article['tags'] = ','.join(tags)
             yield article
     

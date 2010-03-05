@@ -66,8 +66,7 @@ import legacy_aliases   # This can be either manually created or
 # Functions to generate permalinks depending on type of article
 permalink_funcs = {
     'article': lambda title,date: get_friendly_url(title),
-    'blog entry': lambda title,date: str(date.year) + "/" + \
-                        str(date.month) + "/" + get_friendly_url(title)
+    'blog entry': lambda title,date: "blog/%d/%02d/%02d/%s" % (date.year, date.month, date.day, get_friendly_url(title))
 }
 
 # We allow a mapping from some old url pattern to the current query 
@@ -122,9 +121,9 @@ def get_tags(tags_string):
     return None
     
 def get_friendly_url(title):
-    return re.sub('-+', '-', 
+    return re.sub('[.+]', '_', 
                   re.sub('[^\w-]', '', 
-                         re.sub('\s+', '-', title.strip())))
+                         re.sub('\s+', '_', title.strip()))).lower()
 
 def get_html(body, markup_type):
     if markup_type == 'textile':
@@ -468,19 +467,19 @@ class ArticleHandler(restful.Controller):
 
 # Blog entries are dated articles
 class BlogEntryHandler(restful.Controller):
-    def get(self, year, month, perm_stem):
+    def get(self, year, month, day, perm_stem):
         logging.debug("BlogEntryHandler#get for year %s, "
-                      "month %s, and perm_link %s", 
-                      year, month, perm_stem)
+                      "month %s, day %s, and perm_link %s", 
+                      year, month, day, perm_stem)
         article = db.Query(models.blog.Article). \
                      filter('permalink =', 
-                            year + '/' + month + '/' + perm_stem).get()
+                            'blog/' + year + '/' + month + '/' + day + '/' + perm_stem).get()
         render_article(self, article)
 
     @restful.methods_via_query_allowed    
     def post(self, year, month, perm_stem):
         logging.debug("Adding comment for blog entry %s", self.request.path)
-        permalink = year + '/' + month + '/' + perm_stem
+        permalink = 'blog/' + year + '/' + month + '/' + day + '/' + perm_stem
         article = db.Query(models.blog.Article). \
                      filter('permalink =', permalink).get()
         if article:
@@ -491,13 +490,13 @@ class BlogEntryHandler(restful.Controller):
 
     @authorized.role("admin")
     def put(self, year, month, perm_stem):
-        permalink = year + '/' + month + '/' + perm_stem
+        permalink = 'blog/' + year + '/' + month + '/' + day + '/' + perm_stem
         logging.debug("BlogEntryHandler#put")
         process_article_edit(handler = self, permalink = permalink)
 
     @authorized.role("admin")
     def delete(self, year, month, perm_stem):
-        permalink = year + '/' + month + '/' + perm_stem
+        permalink = 'blog/' + year + '/' + month + '/' + day + '/' + perm_stem
         logging.debug("Deleting blog entry %s", permalink)
         article = db.Query(models.blog.Article). \
                      filter('permalink =', permalink).get()

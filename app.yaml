@@ -18,10 +18,6 @@ handlers:
   static_files: static/robots.txt
   upload: static/robots.txt
 
-- url: /admin/shell.*
-  script: handlers/shell/shell.py
-  login: admin
-
 - url: .*
   script: main.py
 

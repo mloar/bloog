@@ -239,7 +239,7 @@ class SearchableQuery(datastore.Query):
     self._search_query = search_query
     return self
 
-  def _ToPb(self, limit=None, offset=None):
+  def _ToPb(self, limit=None, offset=None, somethingorother=None):
     """Adds filters for the search query, then delegates to the superclass.
 
     Raises BadFilterError if a filter on the index property already exists.

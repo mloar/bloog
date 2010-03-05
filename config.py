@@ -110,3 +110,4 @@ BLOG['author'] = "Matthew Loar"
 BLOG['email'] = "mattloar@gmail.com"
 BLOG['description'] = "Where the Loar Lurks"
 BLOG['root_url'] = "http://matthew.loar.name"
+BLOG['theme'] = ['mloar']

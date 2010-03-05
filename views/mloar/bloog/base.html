@@ -4,7 +4,7 @@
         <meta http-equiv="Content-Type" content="{{ blog.html_type }}; charset={{ blog.charset }}" />
         <title> {{ title }}</title>
         <meta name="generator" content="Bloog {{ bloog_version }}" />
-        <link rel="stylesheet" href="/static/default/style.css" type="text/css" media="screen" />
+        <link rel="stylesheet" href="/static/mloar/style.css" type="text/css" media="screen" />
         <link rel="alternate" type="application/rss+xml" title="{{ blog.title }} RSS Feed" 
               href="{{ blog.root_url }}{{ blog.master_atom_url }}" />
         <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/2.5.2/build/assets/skins/sam/skin.css" />
@@ -18,7 +18,7 @@
             <div id="masthead" class="fix">
                 <h1><a href="/">{{ blog.title }}</a></h1>
                 <div id="authorBlurb">
-                    <img src="/static/default/images/avatar.png" alt="Avatar" />
+                    <img src="/static/mloar/images/avatar.png" alt="Avatar" />
                     <p id="authorIntro">
                         {{ blog.description }}
                     </p>
@@ -60,18 +60,21 @@
             </ul>
             <div id="archives" class="fix" style="display: none;">
                 <ul class="fix">
-                    <li><a href="/2008">2008</a></li>
-                    <li><a href="/2007">2007</a></li>
-                    <li><a href="/2006">2006</a></li>
-                    <li><a href="/2005">2005</a></li>
-                    <li><a href="/2004">2004</a></li>
+                    <li><a href="/blog/2010">2010</a></li>
+                    <li><a href="/blog/2009">2009</a></li>
+                    <li><a href="/blog/2008">2008</a></li>
+                    <li><a href="/blog/2007">2007</a></li>
+                    <li><a href="/blog/2006">2006</a></li>
+                    <li><a href="/blog/2005">2005</a></li>
+                    <li><a href="/blog/2004">2004</a></li>
+                    <li><a href="/blog/2003">2003</a></li>
                 </ul>
             </div>
 
             <div id="mid" class="fix">
                 <!-- First column: Main content -->
                 {% block first_column %}
-                <div id="mainCol" class="fix"><a name="main"></a>
+                <div id="twoCol" class="fix"><a name="main"></a>
                 {% for article in articles %}
                     {% include 'article_excerpt.html' %}
                 {% endfor %}
@@ -89,7 +92,7 @@
                     <div id="searchWrap">
                         <form method="get" id="searchForm" action="/search">
                             <input type="text" value="{{ searchterm }}" name="s" id="s" />
-                            <input id="searchsubmit" type="image" src="/static/default/images/btn_search.gif" alt="Search" />
+                            <input id="searchsubmit" type="image" src="/static/mloar/images/btn_search.gif" alt="Search" />
                         </form>
                     </div>
                     {% endblock %}
@@ -123,7 +126,6 @@
                                 <li><a id="newblog" href="#">New Blog Entry</a></li>
                                 <li><a id="newarticle" href="#">New Article</a>
                                     - unsyndicated<br />(e.g., about page)</li>
-                                <li><a id="openshell" href="/admin/shell">Open Shell</a></li>
                                 <li><a href="/admin/cache_stats">Memcached Stats</a></li>
                                 <li><a href="/admin/timings">Timing Stats</a></li>
                             </ul>
@@ -179,11 +181,6 @@
                     </div>
                     {% endblock %}
                 </div>
-                {% endblock %}
-
-                <!-- Third column: Show selected external links, ads, etc. -->
-                {% block third_column %}
-                {% include 'ads.html' %}
                 {% endblock %}
             </div>
 
@@ -254,7 +251,7 @@
         </div>
 
         <script type="text/javascript" src="http://yui.yahooapis.com/2.5.2/build/yahoo-dom-event/yahoo-dom-event.js"></script>
-        <script type="text/javascript" src="/static/default/js/bloog_base.js"></script>
+        <script type="text/javascript" src="/static/mloar/js/bloog_base.js"></script>
 
         {% if user_is_admin %}
         {% include "form_editor.html" %}
