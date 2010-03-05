@@ -61,7 +61,9 @@ import urlparse
 import socket
 import string
 
-from utils.external import textile
+import feedparser
+
+#from utils.external import textile
 
 help_message = """
 First argument must be an authentication cookie that can be cut & pasted after
@@ -126,6 +128,10 @@ try:
     db_types['postgres'] = postgres_connect
 except ImportError:
     pass
+
+def nothing_connect(dbuser, dbpasswd, dbhostname, dbport, dbname):
+    pass
+db_types['none'] = nothing_connect
 
 def clean_multiline(raw_string):
     return ''.join([x for x in raw_string if ord(x) in OK_CHARS])
@@ -230,7 +236,6 @@ class BlogConverter(object):
         self.app_url = app_url
         self.table_prefix = table_prefix
         self.conn = conn
-        self.cursor = self.conn.cursor()
         self.static_redirect = static_redirect
     
     def close(self):
@@ -408,7 +413,7 @@ class DrupalConverter(BlogConverter):
         "filtered html",
         None,           # php code which we'll reject
         "html",         # full html
-        "textile"
+        #"textile"
     ]
 
     def get_html(self, raw_body, markup_type):
@@ -531,10 +536,51 @@ class DrupalConverter(BlogConverter):
 
         super(DrupalConverter, self).go(num_articles)
 
+class AtomConverter(BlogConverter):
+    def get_articles(self):
+        self.feed = feedparser.parse(self.table_prefix)
+        for entry in self.feed.entries:
+            article = {}
+            article['legacy_id'] = entry['id']
+            article['title'] = entry['title']
+            article['format'] = None
+            article['body'] = entry['content'][0]['value']
+            article['html'] = article['body']
+            article['format'] = 'html'
+            published = entry['published_parsed']
+            last_modified = entry['published'] #entry['updated']
+            article['published'] = '%s-%s-%s %s:%s:%s' % (published[0], published[1], published[2], published[3], published[4], published[5])
+            article['updated'] = article['published'] #str(last_modified)
+            article['post_url'] = '/%s/%s' % (published[0], published[1])
+            tags = {}
+            for cat in entry['tags']:
+                tags[cat['term']] = cat['term']
+            article['tags'] = ','.join(tags)
+            yield article
+    
+    def get_article_tags(self, article):
+        return article
+
+    def get_article_comments(self, article):
+        return []
+    
+    def get_redirects(self):
+        return []
+
+    def go(self, num_articles=None):
+        class Bob:
+            def close(self):
+                pass
+        self.conn = Bob()
+        self.cursor = Bob()
+        super(AtomConverter, self).go(num_articles)
+
+
 
 blog_types = {
   'serendipity': SerendipityConverter,
   'drupal': DrupalConverter,
+  'atom': AtomConverter,
 }
 
 
