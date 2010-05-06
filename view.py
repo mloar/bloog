@@ -134,8 +134,6 @@ def get_view_file(handler, params={}):
     # Now check possible extensions for the given template file.
     if module_name and handler_name:
         entries = templates.get(app_name, {}).get(module_name, {})
-        import sys
-        print >> sys.stderr, entries
         possible_roles = []
         if users.is_current_user_admin():
             possible_roles.append('.admin.')
