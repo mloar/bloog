@@ -60,6 +60,7 @@ import urllib
 import urlparse
 import socket
 import string
+import codecs
 
 import feedparser
 
@@ -218,7 +219,6 @@ class HttpRESTClient(object):
         body = urllib.urlencode(body_dict)
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded',
-            'Content-Length': len(body),
             'Cookie': self.auth_cookie
         }
         status, reason, content, tuple_headers = \
@@ -315,7 +315,7 @@ class SerendipityConverter(BlogConverter):
             last_modified = datetime.datetime.fromtimestamp(row[3])
             article['published'] = str(published)
             article['updated'] = str(last_modified)
-            article['post_url'] = '/%s/%s/' % (published.year, published.month)
+            article['post_url'] = '/blog/%s/%s/' % (published.year, published.month)
             yield article
     
     def get_article_tags(self, article):
@@ -464,7 +464,7 @@ class DrupalConverter(BlogConverter):
                     # Determine where to POST this article if it's a 
                     # article or a blog entry
                     if ntype == 'blog':
-                        article['post_url'] = '/' + str(published.year) + \
+                        article['post_url'] = '/blog/' + str(published.year) + \
                                               '/' + str(published.month) + "/"
                     else:
                         article['post_url'] = '/'
@@ -542,16 +542,16 @@ class AtomConverter(BlogConverter):
         for entry in self.feed.entries:
             article = {}
             article['legacy_id'] = entry['id']
-            article['title'] = entry['title']
+            article['title'] = codecs.getencoder('utf8')(entry['title'])[0]
             article['format'] = None
-            article['body'] = entry['content'][0]['value']
+            article['body'] = codecs.getencoder('utf8')(entry['content'][0]['value'])[0]
             article['html'] = article['body']
             article['format'] = 'html'
             published = entry['published_parsed']
             last_modified = entry['published'] #entry['updated']
             article['published'] = '%d-%02d-%02d %02d:%02d:%02d' % (published[0], published[1], published[2], published[3], published[4], published[5])
             article['updated'] = article['published'] #str(last_modified)
-            article['post_url'] = '/%d/%02d' % (published[0], published[1])
+            article['post_url'] = '/blog/%d/%02d' % (published[0], published[1])
             tags = {}
             if (hasattr(entry, 'tags')):
                 for cat in entry['tags']:

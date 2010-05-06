@@ -41,7 +41,7 @@ YAHOO.bloog.initAdmin = function() {
                 var today = new Date();
                 var month = today.getMonth() + 1;
                 var year = today.getFullYear();
-                YAHOO.bloog.http.action = "/" + year + "/" + month;
+                YAHOO.bloog.http.action = "/blog/" + year + "/";
                 YAHOO.bloog.http.verb = 'POST';
                 YAHOO.bloog.editor.setEditorHTML('<p>Blog entry goes here</p>');
                 YAHOO.bloog.postDialog.render();

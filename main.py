@@ -52,6 +52,7 @@ ROUTES = [
     ('/blog/([12]\d\d\d)/*$', blog.YearHandler),
     ('/blog/([12]\d\d\d)/([01]\d)/*$', blog.MonthHandler),
     ('/blog/([12]\d\d\d)/([01]\d)/([0123]\d)/([-\w]+)/*$', blog.BlogEntryHandler),
+    ('/data.*', blog.GoneHandler),
     ('/admin/cache_stats/*$', cache_stats.CacheStatsHandler),
     ('/admin/timings/*$', timings.TimingHandler),
     ('/search', blog.SearchHandler),
@@ -59,6 +60,7 @@ ROUTES = [
     ('/tag/(.*)', blog.TagHandler),
     (config.BLOG['master_atom_url'] + '/*$', blog.AtomHandler),
     ('/articles', blog.ArticlesHandler),
+    ('/software', blog.ArticleHandler),
     ('/sitemap.xml', blog.SitemapHandler),
     ('/(.*)', blog.ArticleHandler)]
 

@@ -121,8 +121,8 @@ def get_tags(tags_string):
     return None
     
 def get_friendly_url(title):
-    return re.sub('[.+]', '_', 
-                  re.sub('[^\w-]', '', 
+    return re.sub('[^\w-]', '_',
+                  re.sub('[.+]', '_',
                          re.sub('\s+', '_', title.strip()))).lower()
 
 def get_html(body, markup_type):
@@ -360,6 +360,11 @@ class UnauthorizedHandler(webapp.RequestHandler):
         self.error(403)
         view.ViewPage(cache_time=36000).render(self)
 
+class GoneHandler(webapp.RequestHandler):
+    def get(self):
+        self.error(410)
+        view.ViewPage(cache_time=36000).render(self)
+
 class RootHandler(restful.Controller):
     def get(self):
         logging.debug("RootHandler#get")
@@ -549,6 +554,12 @@ class YearHandler(restful.Controller):
                filter('published >=', start_date). \
                filter('published <=', end_date), 
             {'title': 'Articles for ' + year, 'year': year})
+    @authorized.role("admin")
+    def post(self, year):
+        """ Add a blog entry. Since we are POSTing, the server handles 
+            creation of the permalink url. """
+        logging.debug("YearHandler#post on year %s", year)
+        process_article_submission(handler=self, article_type='blog entry')
 
 class MonthHandler(restful.Controller):
     def get(self, year, month):
