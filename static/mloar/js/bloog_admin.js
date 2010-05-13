@@ -62,12 +62,14 @@ YAHOO.bloog.initAdmin = function() {
     }
 
     YAHOO.bloog.populateDialog = function(o) {
-        var article = eval('(' + o.responseText + ')')
+        var article = eval('(' + o.responseText + ')');
         document.getElementById("postTitle").value = article.title;
         if (article.tags) {
             document.getElementById("postTags").value = article.tags.join(', ');
         }
-        YAHOO.bloog.editor.setEditorHTML(article.body);
+        // We should be calling setEditorHTML, but it fails...some of the time.
+        document.getElementById("postBody").value = article.body;
+        //YAHOO.bloog.editor.setEditorHTML(article.body);
         YAHOO.bloog.postDialog.render();
         YAHOO.bloog.postDialog.show();
     }
