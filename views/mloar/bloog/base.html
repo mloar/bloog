@@ -88,15 +88,6 @@
                 <!-- Second column: Show search, selected internal links, etc. -->
                 {% block second_column %}
                 <div id="midCol">
-                    {% block search %}
-                    <div id="searchWrap">
-                        <form method="get" id="searchForm" action="/search">
-                            <input type="text" value="{{ searchterm }}" name="s" id="s" />
-                            <input id="searchsubmit" type="image" src="/static/mloar/images/btn_search.gif" alt="Search" />
-                        </form>
-                    </div>
-                    {% endblock %}
-
                     {% block tags %}
                     <div class="middle_links">
                         <h3>Categories</h3>
