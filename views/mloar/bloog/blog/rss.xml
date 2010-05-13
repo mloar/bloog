@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<rss version="2.0"><channel>
+    <title>{{ blog.title }}</title>
+    <lastBuildDate>{{ blog_updated_timestamp }}</lastBuildDate>
+    <link>{{ blog.root_url }}</link>
+
+    {% for article in articles %}
+    <item>
+        <title>{{ article.title }}</title>
+        <link>{{ article.full_permalink }}</link>
+
+        <pubDate>{{ article.rfc3339_published}}</pubDate>
+
+        <description>
+                {{ article.to_rss }}
+        </description>
+    </entry>
+    {% endfor %}
+
+</channel></rss>

@@ -134,6 +134,17 @@ class Article(search.SearchableModel):
         import re
         return re.sub('&(?!amp;)', '&amp;', self.html)
 
+    def to_rss(self):
+        """Returns a string suitable for inclusion in RSS feed
+        
+        Internal html property should already have XHTML entities
+        converted into unicode.  However, ampersands are valid ASCII
+        and will cause issues with XML, so reconvert ampersands to
+        valid XML entities &amp;
+        """
+        import cgi
+        return cgi.escape(self.html)
+
 class Comment(models.SerializableModel):
     """Stores comments and their position in comment threads.
 

@@ -107,7 +107,15 @@ PAGE = {
 
 BLOG['title'] = "Loar's Lair"
 BLOG['author'] = "Matthew Loar"
-BLOG['email'] = "mattloar@gmail.com"
+BLOG['email'] = "matthew@loar.name"
 BLOG['description'] = "Where the Loar Lurks"
 BLOG['root_url'] = "http://matthew.loar.name"
+BLOG['master_atom_url'] = '/atom.xml';
+BLOG['master_rss_url'] = '/rss.xml';
 BLOG['theme'] = ['mloar']
+PAGE['navlinks'] = [
+        { "title": "Software", "description": "Software Projects",
+          "url": "/software"},
+    ]
+PAGE['featuredMyPages'] = []
+PAGE['featuredOthersPages'] = []

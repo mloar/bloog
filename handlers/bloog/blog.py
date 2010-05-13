@@ -494,13 +494,13 @@ class BlogEntryHandler(restful.Controller):
             self.error(400)
 
     @authorized.role("admin")
-    def put(self, year, month, perm_stem):
+    def put(self, year, month, day, perm_stem):
         permalink = 'blog/' + year + '/' + month + '/' + day + '/' + perm_stem
         logging.debug("BlogEntryHandler#put")
         process_article_edit(handler = self, permalink = permalink)
 
     @authorized.role("admin")
-    def delete(self, year, month, perm_stem):
+    def delete(self, year, month, day, perm_stem):
         permalink = 'blog/' + year + '/' + month + '/' + day + '/' + perm_stem
         logging.debug("Deleting blog entry %s", permalink)
         article = db.Query(models.blog.Article). \
@@ -595,6 +595,21 @@ class AtomHandler(webapp.RequestHandler):
             updated = articles[0].rfc3339_updated()
         
         self.response.headers['Content-Type'] = 'application/atom+xml'
+        page = view.ViewPage()
+        page.render(self, {"blog_updated_timestamp": updated, 
+                           "articles": articles, "ext": "xml"})
+
+class RssHandler(webapp.RequestHandler):
+    def get(self):
+        logging.debug("Sending RSS feed")
+        articles = db.Query(models.blog.Article). \
+                      filter('article_type =', 'blog entry'). \
+                      order('-published').fetch(limit=10)
+        updated = ''
+        if articles:
+            updated = articles[0].rfc3339_updated()
+        
+        self.response.headers['Content-Type'] = 'application/rss+xml'
         page = view.ViewPage()
         page.render(self, {"blog_updated_timestamp": updated, 
                            "articles": articles, "ext": "xml"})
