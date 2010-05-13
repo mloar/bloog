@@ -45,6 +45,7 @@
         </div>
     </div>
 {% endif %}
+{% if blog.comments_enabled %}
     <div id="comments_wrapper">
         {% if allow_comments %}
         <a class="replybtn" href="#">Add a comment...</a>
@@ -64,13 +65,16 @@
         </div>
         {% endif %}
     </div>
+{% endif %}
 </div>
 {% endblock %}
 
 {% block end_body %}
 
+{% if blog.comments_enabled %}
 {% if allow_comments %}
 {% include "form_comment.html" %}
+{% endif %}
 {% endif %}
 
 {% if article.embedded_code %}

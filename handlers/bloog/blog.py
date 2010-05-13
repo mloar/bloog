@@ -66,6 +66,7 @@ import legacy_aliases   # This can be either manually created or
 # Functions to generate permalinks depending on type of article
 permalink_funcs = {
     'article': lambda title,date: get_friendly_url(title),
+    'software': lambda title,date: 'software/' + get_friendly_url(title),
     'blog entry': lambda title,date: "blog/%d/%02d/%02d/%s" % (date.year, date.month, date.day, get_friendly_url(title))
 }
 
@@ -389,6 +390,21 @@ class ArticlesHandler(restful.Controller):
                filter('article_type =', 'article').order('title'),
             num_limit=20)
 
+class SoftwaresHandler(restful.Controller):
+    def get(self):
+        logging.debug("SoftwaresHandler#get")
+        page = view.ViewPage()
+        page.render_query(
+            self, 'articles',
+            db.Query(models.blog.Article). \
+               filter('article_type =', 'software').order('title'),
+            num_limit=20)
+
+    @authorized.role("admin")
+    def post(self):
+        logging.debug("RootHandler#post")
+        process_article_submission(handler=self, article_type='software')
+
 # Articles are off root url
 # TODO -- Make it DRY by combining Article/MonthHandler
 class ArticleHandler(restful.Controller):
@@ -404,6 +420,85 @@ class ArticleHandler(restful.Controller):
         # Check undated pages
         article = db.Query(models.blog.Article). \
                      filter('permalink =', path).get()
+
+        if not article:
+            # This lets you map arbitrary URL patterns like /node/3
+            #  to article properties, e.g. 3 -> legacy_id property
+            article = legacy_id_mapping(path,
+                                        config.BLOG["legacy_blog_software"])
+            if article and config.BLOG["legacy_entry_redirect"]:
+                self.redirect('/' + article.permalink)
+                return
+        render_article(self, article)
+
+    @restful.methods_via_query_allowed    
+    def post(self, path):
+        article = db.Query(models.blog.Article).filter('permalink =', path).get()
+        process_comment_submission(self, article)
+
+    @authorized.role("admin")
+    def put(self, path):
+        logging.debug("ArticleHandler#put")
+        process_article_edit(self, permalink = path)
+
+    @authorized.role("admin")
+    def delete(self, path):
+        """
+        By using DELETE on /Article, /Comment, /Tag, you can delete the first 
+         entity of the desired kind.
+        This is useful for writing utilities like clear_datastore.py.  
+        """
+        # TODO: Add DELETE for articles off root like blog entry DELETE.
+        model_class = path.lower()
+        logging.debug("ArticleHandler#delete on %s", path)
+
+        def delete_entity(query):
+            targets = query.fetch(limit=1)
+            if len(targets) > 0:
+                if hasattr(targets[0], 'title'):
+                    title = targets[0].title
+                elif hasattr(targets[0], 'name'):
+                    title = targets[0].name
+                else:
+                    title = ''
+                logging.debug('Deleting %s %s', model_class, title)
+                targets[0].delete()
+                self.response.out.write('Deleted ' + model_class + ' ' + title)
+                view.invalidate_cache()
+            else:
+                self.response.set_status(204, 'No more ' + model_class + ' entities')
+                
+        if model_class == 'article':
+            query = models.blog.Article.all()
+            delete_entity(query)
+        elif model_class == 'comment':
+            query = models.blog.Comment.all()
+            delete_entity(query)
+        elif model_class == 'tag':
+            query = models.blog.Tag.all()
+            delete_entity(query)
+        else:
+            article = db.Query(models.blog.Article). \
+                         filter('permalink =', path).get()
+            for key in article.tag_keys:
+                db.get(key).counter.decrement()
+            article.delete()
+            view.invalidate_cache()
+            restful.send_successful_response(self, "/")
+
+class SoftwareHandler(restful.Controller):
+    def get(self, path):
+        logging.debug("SoftwareHandler#get on path (%s)", path)
+        # Handle precomputed legacy aliases
+        # TODO: Use hash for case-insensitive lookup
+        for alias in legacy_aliases.redirects:
+            if path.lower() == alias.lower():
+                self.redirect(legacy_aliases.redirects[alias])
+                return
+
+        # Check undated pages
+        article = db.Query(models.blog.Article). \
+                     filter('permalink =', 'software/' + path).get()
 
         if not article:
             # This lets you map arbitrary URL patterns like /node/3

@@ -62,8 +62,8 @@ ROUTES = [
     (config.BLOG['master_rss_url'] + '/*$', blog.RssHandler),
     (config.BLOG['master_atom_url'] + '/*$', blog.AtomHandler),
     ('/articles', blog.ArticlesHandler),
-    ('/software/*', blog.ArticlesHandler),
-    ('/software/(.*)', blog.ArticleHandler),
+    ('/software/*', blog.SoftwaresHandler),
+    ('/software/(.*)', blog.SoftwareHandler),
     ('/sitemap.xml', blog.SitemapHandler),
     ('/(.*)', blog.ArticleHandler)]
 

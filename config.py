@@ -37,6 +37,9 @@ BLOG = {
     
     # Display gravatars alongside user comments?
     "use_gravatars": True,
+
+    # Turn comments off entirely?
+    "comments_enabled": True,
     
     # Do you want to be emailed when new comments are posted?
     "send_comment_notification": True,
@@ -110,9 +113,10 @@ BLOG['author'] = "Matthew Loar"
 BLOG['email'] = "matthew@loar.name"
 BLOG['description'] = "Where the Loar Lurks"
 BLOG['root_url'] = "http://matthew.loar.name"
-BLOG['master_atom_url'] = '/atom.xml';
-BLOG['master_rss_url'] = '/rss.xml';
+BLOG['master_atom_url'] = '/atom.xml'
+BLOG['master_rss_url'] = '/rss.xml'
 BLOG['theme'] = ['mloar']
+BLOG['comments_enabled'] = False
 PAGE['navlinks'] = [
         { "title": "Software", "description": "Software Projects",
           "url": "/software"},

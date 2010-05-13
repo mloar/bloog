@@ -36,6 +36,14 @@ YAHOO.bloog.initAdmin = function() {
                 YAHOO.bloog.postDialog.render();
                 YAHOO.bloog.postDialog.show();
                 break;
+            case 'newsoftware':
+                hdr.setContent('Submit Software');
+                YAHOO.bloog.http.action = '/software';
+                YAHOO.bloog.http.verb = 'POST';
+                YAHOO.bloog.editor.setEditorHTML('<p>Article goes here</p>');
+                YAHOO.bloog.postDialog.render();
+                YAHOO.bloog.postDialog.show();
+                break;
             case 'newblog':
                 hdr.setContent('Submit Blog Entry');
                 var today = new Date();
@@ -287,6 +295,7 @@ YAHOO.bloog.initAdmin = function() {
     YAHOO.bloog.deleteDialog.render(document.body);
     
     YAHOO.util.Event.on("newarticle", "click", showRTE);
+    YAHOO.util.Event.on("newsoftware", "click", showRTE);
     YAHOO.util.Event.on("newblog", "click", showRTE);
     YAHOO.util.Event.on("editbtn", "click", showRTE);
     YAHOO.util.Event.on("deletebtn", "click", function (e) { YAHOO.bloog.deleteDialog.show(); });

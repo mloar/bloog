@@ -52,7 +52,7 @@ class Article(search.SearchableModel):
     legacy_id = db.StringProperty()
     title = db.StringProperty(required=True)
     article_type = db.StringProperty(required=True, 
-                                     choices=set(["article", "blog entry"]))
+                                     choices=set(["article", "blog entry", "software"]))
     # Body can be in any format supported by Bloog (e.g. textile)
     body = db.TextProperty(required=True)
     # If available, we use 'excerpt' to summarize instead of 
