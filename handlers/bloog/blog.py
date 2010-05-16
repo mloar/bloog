@@ -156,9 +156,10 @@ def process_embedded_code(article):
     # TODO -- Check for embedded code, escape opening triangular brackets
     # within code, and set article embedded_code strings so we can
     # use proper javascript.
-    from utils import codehighlighter
-    article.html, languages = codehighlighter.process_html(article.html)
-    article.embedded_code = languages
+    #from utils import codehighlighter
+    #article.html, languages = codehighlighter.process_html(article.html)
+    #article.embedded_code = languages
+    pass
 
 def process_article_edit(handler, permalink):
     # For http PUT, the parameters are passed in URIencoded string in body
@@ -402,7 +403,7 @@ class SoftwaresHandler(restful.Controller):
 
     @authorized.role("admin")
     def post(self):
-        logging.debug("RootHandler#post")
+        logging.debug("SoftwaresHandler#post")
         process_article_submission(handler=self, article_type='software')
 
 # Articles are off root url
@@ -517,53 +518,20 @@ class SoftwareHandler(restful.Controller):
 
     @authorized.role("admin")
     def put(self, path):
-        logging.debug("ArticleHandler#put")
-        process_article_edit(self, permalink = path)
+        logging.debug("SoftwareHandler#put")
+        process_article_edit(self, permalink = 'software/' + path)
 
     @authorized.role("admin")
     def delete(self, path):
-        """
-        By using DELETE on /Article, /Comment, /Tag, you can delete the first 
-         entity of the desired kind.
-        This is useful for writing utilities like clear_datastore.py.  
-        """
-        # TODO: Add DELETE for articles off root like blog entry DELETE.
-        model_class = path.lower()
-        logging.debug("ArticleHandler#delete on %s", path)
-
-        def delete_entity(query):
-            targets = query.fetch(limit=1)
-            if len(targets) > 0:
-                if hasattr(targets[0], 'title'):
-                    title = targets[0].title
-                elif hasattr(targets[0], 'name'):
-                    title = targets[0].name
-                else:
-                    title = ''
-                logging.debug('Deleting %s %s', model_class, title)
-                targets[0].delete()
-                self.response.out.write('Deleted ' + model_class + ' ' + title)
-                view.invalidate_cache()
-            else:
-                self.response.set_status(204, 'No more ' + model_class + ' entities')
-                
-        if model_class == 'article':
-            query = models.blog.Article.all()
-            delete_entity(query)
-        elif model_class == 'comment':
-            query = models.blog.Comment.all()
-            delete_entity(query)
-        elif model_class == 'tag':
-            query = models.blog.Tag.all()
-            delete_entity(query)
-        else:
-            article = db.Query(models.blog.Article). \
-                         filter('permalink =', path).get()
-            for key in article.tag_keys:
-                db.get(key).counter.decrement()
-            article.delete()
-            view.invalidate_cache()
-            restful.send_successful_response(self, "/")
+        permalink = 'software/' + path
+        logging.debug("Deleting software %s", permalink)
+        article = db.Query(models.blog.Article). \
+                     filter('permalink =', permalink).get()
+        for key in article.tag_keys:
+            db.get(key).counter.decrement()
+        article.delete()
+        view.invalidate_cache()
+        restful.send_successful_response(self, "/")
 
 # Blog entries are dated articles
 class BlogEntryHandler(restful.Controller):
